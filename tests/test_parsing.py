@@ -63,3 +63,9 @@ def test_parse_empty():
 def test_naive_date_defaults_to_utc():
     raw = _make_record("a1", "a1", "Bob", "b@x.com", "2026-06-18T09:00:00", "x")
     assert parse_log(raw)[0].date.tzinfo is not None
+
+
+def test_zulu_suffix_parsed():
+    raw = _make_record("a1", "a1", "Bob", "b@x.com", "2026-06-18T09:00:00Z", "x")
+    commit = parse_log(raw)[0]
+    assert commit.date == datetime(2026, 6, 18, 9, 0, tzinfo=timezone.utc)

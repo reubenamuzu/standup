@@ -72,7 +72,11 @@ def is_git_repo(path: str) -> bool:
 
 
 def _parse_iso(value: str) -> datetime:
-    dt = datetime.fromisoformat(value.strip())
+    value = value.strip()
+    # Python < 3.11's fromisoformat rejects the trailing 'Z' that newer git emits.
+    if value.endswith("Z"):
+        value = value[:-1] + "+00:00"
+    dt = datetime.fromisoformat(value)
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
     return dt
